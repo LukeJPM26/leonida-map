@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#101b20" />
+<meta name="description" content="Leonida Together: a personal, two-player GTA VI community map and discovery tracker." />
+<title>Leonida Together — Our GTA VI Map</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--bg:#0c171d;--panel:#111f27;--panel2:#172932;--line:#29414b;--text:#eef7f6;--muted:#97afb5;--lime:#d6fa72;--sea:#60d5cd;--amber:#ffc281;--shadow:0 14px 44px rgba(0,0,0,.36)}
+*{box-sizing:border-box}body,html{margin:0;height:100%;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--lime);outline-offset:2px}a{color:var(--sea)}.shell{height:100dvh;display:flex;overflow:hidden}.sidebar{width:345px;flex:none;background:var(--panel);border-right:1px solid var(--line);z-index:700;display:flex;flex-direction:column;box-shadow:8px 0 22px #05101435}.brand{padding:22px 22px 14px;border-bottom:1px solid var(--line)}.eyebrow{font-size:10px;color:var(--lime);text-transform:uppercase;letter-spacing:.2em;font-weight:800}.brandhead{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand h1{font-size:25px;letter-spacing:-1px;line-height:1.02;margin:7px 0 9px;font-weight:850}.brand p{font-size:12px;line-height:1.5;color:var(--muted);margin:0}.iconbtn{background:#20343b;border:1px solid var(--line);border-radius:11px;padding:9px 10px;color:var(--text);font-size:17px;line-height:1;min-width:38px}.iconbtn:hover,.softbtn:hover{background:#2a444d}.sidecontent{overflow:auto;padding:18px 17px 26px;flex:1;overscroll-behavior:contain}.tinylabel{font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:0 0 9px}.profiles{display:flex;gap:8px;margin-bottom:16px}.profile{padding:11px 10px;border-radius:12px;flex:1;background:#182a32;border:1px solid var(--line);color:var(--muted);font-size:13px;font-weight:750;display:flex;align-items:center;justify-content:center;gap:7px}.profile.active{border-color:var(--lime);background:#263a31;color:var(--lime)}.profile b{display:inline-grid;place-items:center;height:22px;width:22px;background:#385058;border-radius:50%;font-size:10px;color:#fff}.profile.active b{background:var(--lime);color:#16221a}.statbox{background:#1c3037;padding:13px 14px;border-radius:14px;border:1px solid #345057;margin-bottom:17px}.statrow{display:flex;justify-content:space-between;align-items:baseline}.statrow strong{font-size:21px;letter-spacing:-.5px}.statrow span{font-size:11px;color:var(--muted)}.track{height:7px;border-radius:100px;background:#0b1c21;overflow:hidden;margin:10px 0 7px}.track i{display:block;height:100%;background:linear-gradient(90deg,var(--sea),var(--lime));width:0%;transition:width .2s}.help{color:var(--muted);font-size:11px;line-height:1.45}.searchwrap{position:relative;margin-bottom:14px}.searchwrap input{background:#0d1b22;border:1px solid #34505a;color:#fff;border-radius:11px;width:100%;height:43px;padding:0 12px 0 36px;font-size:13px}.searchwrap:before{content:'⌕';position:absolute;top:4px;left:11px;font-size:26px;color:var(--muted)}.results{display:none;background:#0d1d24;border:1px solid #334b54;border-radius:11px;margin:-5px 0 14px;max-height:260px;overflow-y:auto}.results.show{display:block}.result{display:block;text-align:left;width:100%;background:none;border:0;border-bottom:1px solid #223943;padding:10px 12px;color:#e3f0ed;font-size:12px}.result:last-child{border-bottom:0}.result:hover{background:#243841}.result small{display:block;color:#91abb1;font-size:10px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.resultempty{font-size:11px;color:#a7c1c5;padding:11px}.toggles{display:flex;gap:8px;margin:0 0 17px}.toggle{background:#1b2e37;border:1px solid var(--line);color:var(--muted);font-size:11px;padding:9px 10px;border-radius:10px;flex:1;white-space:nowrap}.toggle.on{background:#24453c;border-color:#5ca78e;color:#c7f5e6}.filterhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.filterhead .tinylabel{margin:0}.smalllink{border:0;background:none;color:var(--sea);font-size:11px;font-weight:700}.category{display:flex;align-items:center;gap:12px;padding:9px 9px;border-radius:10px;cursor:pointer;min-height:42px}.category:hover{background:#20333c}.category input{accent-color:var(--lime);height:16px;width:16px;margin:0}.catdot{height:11px;width:11px;display:block;border-radius:50%;flex:none}.catname{font-size:12px;flex:1}.catcount{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}.footerlinks{border-top:1px solid var(--line);padding:12px 17px;display:flex;gap:8px}.softbtn{flex:1;background:#1d3038;border:1px solid #39515b;border-radius:10px;padding:10px 7px;color:#e2eeee;font-size:12px;font-weight:700}.main{position:relative;flex:1;min-width:0;background:#195d83}.map{width:100%;height:100%;background:#226194}.leaflet-container{background:#226194;font-family:inherit}.leaflet-control-attribution{font-size:9px!important;max-width:60vw}.floatheader{position:absolute;top:15px;left:16px;right:16px;z-index:450;display:flex;gap:10px;justify-content:space-between;pointer-events:none}.floatheader>*{pointer-events:auto}.pill{padding:10px 13px;border-radius:13px;background:#102029eb;border:1px solid #35505a;color:#e9f4f3;box-shadow:var(--shadow);font-size:12px;display:flex;align-items:center;gap:8px;max-width:calc(100% - 120px)}.pill strong{font-size:11px}.topactions{display:flex;gap:7px}.action{background:#102029e9;border:1px solid #35505a;border-radius:11px;padding:10px 13px;color:#fff;font-size:12px;font-weight:750;box-shadow:var(--shadow)}.action:hover{background:#223740}.addbtn{position:absolute;right:19px;bottom:29px;z-index:440;padding:14px 17px;border-radius:16px;background:var(--lime);color:#162320;border:1px solid #f5ffbf;font-weight:900;box-shadow:var(--shadow);font-size:13px}.addbtn.placing{background:var(--amber)}.zoomctrl{position:absolute;right:19px;bottom:91px;z-index:440;display:flex;flex-direction:column;background:#172932;border:1px solid #37525d;border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}.zoomctrl button{background:none;border:0;color:#fff;width:43px;height:39px;font-size:24px}.zoomctrl button+button{border-top:1px solid #37525d}.notice{position:absolute;z-index:455;left:50%;transform:translateX(-50%);top:72px;max-width:min(620px,calc(100% - 24px));padding:10px 15px;border-radius:11px;background:#26353a;color:#fff;font-size:12px;box-shadow:var(--shadow);display:none}.notice.show{display:block}.detail{position:absolute;bottom:20px;left:20px;z-index:460;width:min(395px,calc(100% - 94px));border:1px solid #42545a;border-radius:17px;background:#12242bed;color:var(--text);box-shadow:var(--shadow);overflow:hidden;display:none;backdrop-filter:blur(20px)}.detail.show{display:block}.detailheader{display:flex;align-items:start;gap:7px;padding:17px 18px 9px}.detail .tag{color:var(--lime);text-transform:uppercase;letter-spacing:.1em;font-size:10px;font-weight:800}.detail h2{font-size:18px;line-height:1.2;margin:5px 0 0;font-weight:800}.detail .close{margin-left:auto;border:0;background:#2d4149;color:#fff;width:27px;height:27px;border-radius:9px;font-size:20px;flex:none}.detailbody{padding:0 18px 17px;font-size:12px;color:var(--muted)}.detailbody p{line-height:1.5;overflow-wrap:anywhere;margin:6px 0 11px}.detailbuttons{display:flex;gap:7px}.detailbuttons button{border:1px solid #426067;background:#1e353d;color:#fff;border-radius:10px;padding:10px;flex:1;font-size:12px;font-weight:750}.detailbuttons button.primary{background:var(--lime);border-color:var(--lime);color:#15201d}.detailbuttons button.active{background:#325b4a;color:#d8ffcc;border-color:#6cac8a}.detail textarea{background:#0a1b22;border:1px solid #405b65;color:#fff;display:block;width:100%;height:62px;border-radius:9px;padding:9px;resize:vertical;margin:11px 0 8px;font-size:12px}.detail .notesrow{display:flex;justify-content:space-between;align-items:center}.detail .notesrow button{background:none;color:var(--sea);border:0;font-size:11px;font-weight:700}.backdrop{position:fixed;inset:0;background:#020a0dc9;z-index:2000;display:none;align-items:center;justify-content:center;padding:16px}.backdrop.show{display:flex}.modal{width:min(510px,100%);max-height:min(780px,94dvh);background:#14262e;border:1px solid #3b5560;border-radius:19px;overflow:auto;box-shadow:0 30px 85px #0009;padding:22px}.modalhead{display:flex;justify-content:space-between;align-items:center;gap:10px}.modal h2{font-size:21px;margin:0 0 4px}.modal p{color:var(--muted);font-size:12px;line-height:1.55}.modal label{display:block;color:#dcebea;font-size:11px;font-weight:750;margin:16px 0 6px}.modal input,.modal textarea,.modal select{width:100%;background:#0b1b22;border:1px solid #45606b;border-radius:10px;padding:12px;color:#f0f8f6;font-size:13px}.modal textarea{min-height:80px;resize:vertical}.buttonrow{display:flex;gap:9px;margin-top:17px}.buttonrow button,.modalbutton{border:0;border-radius:10px;padding:12px 14px;font-size:12px;font-weight:800;background:var(--lime);color:#162420;cursor:pointer}.buttonrow button.alt{background:#273b43;color:#e0eeee;border:1px solid #46606b}.sectiondiv{border:0;border-top:1px solid #39505a;margin:18px 0}.note{background:#23383f;padding:11px 12px;border-radius:10px;font-size:11px;line-height:1.5;color:#b9d4d6}.syncstatus{display:inline-flex;align-items:center;gap:7px;border-radius:10px;background:#253e3b;color:#caece4;font-size:11px;padding:7px 10px}.syncstatus i{width:7px;height:7px;border-radius:50%;background:#98e8cb}.loading{position:absolute;z-index:455;bottom:26px;left:20px;background:#102329e8;color:#e0eded;padding:12px 14px;border-radius:12px;border:1px solid #3c535b;font-size:12px;max-width:300px;box-shadow:var(--shadow)}.menu{display:none}.mobileveil{display:none}.legends{position:absolute;z-index:400;right:18px;bottom:150px;color:#fff9;background:#0b1b20ab;padding:8px 10px;font-size:10px;border-radius:9px;max-width:185px}.custombadge{display:inline-block;background:#7f58cb;color:#fff;padding:3px 7px;border-radius:6px;font-size:9px;margin-left:5px}.muted{color:var(--muted)}.rowbetween{display:flex;justify-content:space-between;align-items:center;gap:10px}.hidden{display:none!important}
+@media(max-width:780px){.shell{display:block}.sidebar{position:absolute;width:min(350px,90vw);height:100dvh;transform:translateX(-101%);transition:transform .22s ease;z-index:1100;top:0;left:0}.sidebar.open{transform:translateX(0)}.mobileveil.show{display:block;position:fixed;inset:0;background:#051014aa;z-index:1050}.main{width:100%;height:100dvh}.menu{display:inline-block}.floatheader{top:12px;left:12px;right:12px}.pill{padding:9px 10px;max-width:calc(100% - 112px)}.pill strong{display:none}.topactions .action{padding:10px}.topactions .action.share{display:none}.detail{left:10px;right:10px;width:auto;bottom:10px;border-radius:16px}.detailheader{padding:14px 15px 7px}.detailbody{padding:0 15px 15px}.addbtn{bottom:17px;right:14px}.zoomctrl{bottom:80px;right:14px}.leaflet-control-attribution{font-size:8px!important}.legends{display:none}.loading{bottom:83px;left:13px}.notice{top:64px}}
+/* Leonida Together v2 — detailed icon-based location browser */
+.sidebar{width:405px}
+.sidecontent{padding:17px 14px 22px}
+.filterhead{margin:1px 3px 10px}
+.cat-filter{display:flex;align-items:center;gap:8px;margin:0 2px 15px}
+.cat-filter input{flex:1;width:100%;background:#0c1a24;color:#e9f3f6;border:1px solid #3b515c;border-radius:10px;padding:10px 12px;font-size:12px;outline-offset:2px}
+.cat-section{padding:8px 0 9px;border-top:1px solid #31434c}
+.cat-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 4px 8px;color:#c9d6df;font-weight:850;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.cat-section-head small{color:#8495a4;font-size:10px;font-weight:650;margin-left:4px;letter-spacing:0}
+.cat-section-actions{display:flex;gap:6px;flex:none}
+.cat-section-actions button{background:none;border:0;color:#91b1bd;padding:3px 2px;font-size:9px;font-weight:850;letter-spacing:.06em}
+.cat-section-actions button:hover{color:var(--lime)}
+.cat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.category{position:relative;display:flex;align-items:stretch;padding:0;min-height:37px;border-radius:9px;background:#182a35;border:1px solid #213844;gap:0;min-width:0;overflow:hidden}
+.category.enabled{background:#233842;border-color:#2f5260}
+.category:hover{background:#2a404e}
+.category label{display:flex;align-items:center;gap:6px;min-width:0;flex:1;cursor:pointer;padding:5px 6px}
+.category input{height:14px;width:14px;flex:none;accent-color:#dafa7c}
+.cat-icon{width:24px;height:24px;display:grid;place-items:center;border-radius:6px;flex:none;background:#141b29;border:1px solid var(--ic)}
+.cat-icon img{width:20px;height:20px;object-fit:contain;image-rendering:auto}
+.catname{font-size:10.5px;line-height:1.15;flex:1;min-width:0;color:#d9e3ea;white-space:normal;overflow-wrap:break-word}
+.catcount{font-size:10px;color:#93aebb;font-variant-numeric:tabular-nums;flex:none;padding-left:2px}
+.only-btn{display:none;position:absolute;right:4px;bottom:2px;background:#cdef83;color:#11281e;border:0;border-radius:4px;font-size:8px;line-height:1;font-weight:900;padding:4px 5px;box-shadow:0 1px 3px #0008}
+.category:hover .only-btn,.category:focus-within .only-btn{display:block}
+.category:hover .catcount,.category:focus-within .catcount{visibility:hidden}
+.profile{font-size:14px}
+.legends{max-width:240px}
+@media(max-width:780px){.sidebar{width:min(395px,94vw)}.cat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.category{min-height:43px}.catname{font-size:11px}.cat-icon{width:26px;height:26px}.only-btn{display:block;position:static;align-self:center;margin-right:3px;background:#354953;color:#dbedf2;padding:6px 5px}.category:hover .catcount,.category:focus-within .catcount{visibility:visible}}
+@media(max-width:350px){.cat-grid{grid-template-columns:1fr}}
+
+.cat-icon{position:relative}.cat-icon .icon-fallback{font-size:16px;line-height:1}.cat-icon img{position:absolute;inset:1px;margin:auto}
+
+/* Keep category names readable on narrow touch screens while retaining the ONLY shortcut. */
+@media(max-width:780px){
+ .category{flex-direction:column;justify-content:space-between;min-height:64px}
+ .category label{width:100%;padding:6px 5px 1px;gap:5px;align-items:center}
+ .catname{font-size:10.75px;overflow-wrap:normal;word-break:normal}
+ .cat-icon{width:24px;height:24px}
+ .catcount{padding-left:0}
+ .only-btn{align-self:flex-end;position:static;margin:1px 5px 4px 0;padding:4px 8px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar" id="sidebar">
+ <div class="brand">
+  <div class="eyebrow">YOUR PRIVATE COMPANION MAP</div>
+  <div class="brandhead"><h1>LEONIDA<br>TOGETHER<span style="color:var(--lime)">.</span></h1><button class="iconbtn menu" id="closeMenu" aria-label="Close menu">×</button></div>
+  <p>Two explorers. One massive state. Track the places you discover in GTA VI.</p>
+ </div>
+ <div class="sidecontent">
+  <div class="tinylabel">Who's exploring?</div>
+  <div class="profiles"><button class="profile active" data-profile="you"><b>L</b> Luke</button><button class="profile" data-profile="partner"><b>P</b> Pupper</button></div>
+  <div class="statbox"><div class="statrow"><strong id="progressText">0 found</strong><span id="totalText">Loading places</span></div><div class="track"><i id="progressBar"></i></div><div class="help" id="progressHelp">Progress is tracked separately for each of you.</div></div>
+  <div class="tinylabel">Find a place</div><div class="searchwrap"><input id="search" type="search" placeholder="Search landmarks, districts, tags…" autocomplete="off" /></div><div class="results" id="searchResults"></div>
+  <div class="toggles"><button class="toggle" id="hideFound">✓ Hide found</button><button class="toggle" id="favOnly">☆ Favourites</button></div>
+  <div class="filterhead"><div class="tinylabel">Locations &amp; categories</div><button class="smalllink" id="toggleCats">Hide all</button></div>
+  <div class="cat-filter"><input id="categorySearch" type="search" autocomplete="off" placeholder="Find a category, e.g. ATM, gym, bank…" aria-label="Find a map category" /></div>
+  <div id="categories"></div>
+ </div>
+ <div class="footerlinks"><button class="softbtn" id="settingsBtn">⚙ Settings & sync</button><button class="softbtn" id="exportBtn">⇩ Backup</button></div>
+</aside>
+<div class="mobileveil" id="mobileVeil"></div>
+<main class="main">
+ <div id="map" class="map" role="application" aria-label="Interactive map of Leonida"></div>
+ <div class="floatheader"><div class="pill"><button class="iconbtn menu" id="menuBtn" aria-label="Open map filters" style="padding:7px 9px">☰</button><span style="color:var(--lime)">●</span><span id="placeCount">Loading Leonida…</span><strong id="profileLabel" style="color:#afc6ca">LUKE</strong></div><div class="topactions"><button class="action share" id="shareBtn">↗ Share view</button><button class="action" id="settingsTop" aria-label="Open settings">⚙</button></div></div>
+ <div class="notice" id="notice"></div>
+ <div class="loading" id="loading">Loading detailed Leonida locations…</div>
+ <div class="legends">Map © GTADB · Locations &amp; icons: Open GTA 6 Map · CC BY 4.0</div>
+ <div class="zoomctrl"><button id="zoomIn" aria-label="Zoom in">+</button><button id="zoomOut" aria-label="Zoom out">−</button></div>
+ <button class="addbtn" id="addPin">＋ Add your own pin</button>
+ <section class="detail" id="detail" aria-live="polite">
+   <div class="detailheader"><div style="flex:1"><div id="detailCategory" class="tag"></div><h2 id="detailTitle"></h2></div><button class="close" id="closeDetail" aria-label="Close details">×</button></div>
+   <div class="detailbody"><p id="detailDescription"></p><div class="detailbuttons"><button class="primary" id="markFound">✓ Mark found</button><button id="markFavourite">☆ Save</button><button id="detailShare">↗</button></div><textarea id="detailNote" placeholder="Your private note for this place…" maxlength="1200"></textarea><div class="notesrow"><span>Notes saved to your selected profile.</span><button id="saveNote">Save note</button></div><button id="deleteCustom" class="hidden" style="background:none;border:0;color:#ffb3a4;font-size:11px;margin-top:10px;padding:0">Delete personal pin</button></div>
+ </section>
+</main>
+</div>
+<div class="backdrop" id="pinModal"><div class="modal">
+ <div class="modalhead"><h2>New personal pin</h2><button class="iconbtn" id="pinClose">×</button></div><p>Add a spot only you two know about, like a hidden vehicle or a place worth revisiting.</p>
+ <label for="pinTitle">Name</label><input id="pinTitle" maxlength="90" placeholder="e.g. Amazing car spawn" />
+ <label for="pinCategory">Type</label><select id="pinCategory"><option value="Personal">Personal discovery</option><option value="Collectibles">Collectible</option><option value="Vehicles">Vehicle</option><option value="Activities">Activity</option><option value="Other">Other</option></select>
+ <label for="pinDesc">Description (optional)</label><textarea id="pinDesc" maxlength="500" placeholder="What did you find here?"></textarea>
+ <div class="buttonrow"><button id="pinSave">Save map pin</button><button class="alt" id="pinCancel">Cancel</button></div>
+ </div></div>
+<div class="backdrop" id="settingsModal"><div class="modal">
+ <div class="modalhead"><h2>Your map settings</h2><button class="iconbtn" id="settingsClose">×</button></div>
+ <p>Both of you can use this map on any phone, tablet or computer. Each has separate found/favourite progress; a sync service is optional.</p>
+ <div class="rowbetween"><span class="syncstatus" id="syncBadge"><i></i> Saved on this device</span><button class="smalllink" id="forceSync">Sync now</button></div>
+ <label for="syncUrl">Google Apps Script web app URL (optional)</label><input id="syncUrl" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off" />
+ <label for="roomCode">Shared room code — use the same on both devices</label><div class="rowbetween"><input id="roomCode" placeholder="Create a new private code" style="flex:1;min-width:0" /><button class="iconbtn" id="generateRoom" title="Create a random code">↻</button></div>
+ <div class="buttonrow"><button id="saveSync">Save sync settings</button><button class="alt" id="disconnectSync">Use device only</button></div>
+ <p class="note">To turn on automatic shared progress, deploy the included <b>sync.gs</b> script from a Google Sheet. Paste its web app URL above and use the same room code on both phones. Without that, the app works independently and progress is kept locally in each browser.</p>
+ <hr class="sectiondiv" />
+ <div class="rowbetween"><strong style="font-size:13px">Backups & transfer</strong><span class="muted" style="font-size:11px">JSON</span></div><p>Download your progress, or restore it on another device. Import merges saved records by their last change time.</p>
+ <div class="buttonrow"><button id="downloadBackup">Download backup</button><button class="alt" id="importBackupBtn">Import backup</button><input type="file" id="importFile" accept=".json,application/json" class="hidden" /></div>
+ <hr class="sectiondiv" />
+ <p class="help">Map imagery: © GTADB.ORG and contributors. Location catalogue and icon artwork: <a target="_blank" rel="noopener" href="https://github.com/fbritoferreira/gta6">Open GTA 6 Map</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. <a target="_blank" rel="noopener" href="https://github.com/rolux/gtadb.org">GTADB map source</a>. Location positions and tags are maintained by the linked independent projects. This fan-made companion is not affiliated with Rockstar Games or Take-Two Interactive.</p>
+ </div></div>
+<script>
+(()=>{'use strict';
+const $ = id => document.getElementById(id);
+const STORAGE = 'leonida-together-v1'; // Keep the original key: old progress and sync credentials survive.
+const DATA_BASE = 'https://fbritoferreira.github.io/gta6/data/';
+const DATA_FALLBACK = 'https://raw.githubusercontent.com/fbritoferreira/gta6/main/public/data/';
+const IMAGE_BASE = 'https://fbritoferreira.github.io/gta6/icons/pins/';
+const TILE_URL = 'https://cdn.jsdelivr.net/gh/rolux/gtadb.org@main/maps/tiles/6/day/{z}/{z},{y},{x}.jpg';
+const TILE_FALLBACK = 'https://raw.githubusercontent.com/rolux/gtadb.org/main/maps/tiles/6/day/';
+const GROUPS = [
+  ['My pins','Your own places'],
+  ['Collectibles','Collectibles'],
+  ['Activities','Activities & challenges'],
+  ['Points of interest','Points of interest'],
+  ['Robberies','Robberies & crime'],
+  ['Shops & food','Shops, food & services'],
+  ['Transport','Vehicles & transport'],
+  ['Places','Other places & landmarks']
+];
+// [group, label, icon asset, colour]. These reflect the published source IDs/types.
+const TYPES = {
+  'personal':['My pins','Our personal pins','landmark','#dafa7c'],
+  'collectible-card':['Collectibles','Collectible cards','collectible-card','#ffe082'],
+  'card':['Collectibles','Collectible cards','collectible-card','#ffe082'],
+  'waink':['Collectibles','WAiNK scans','waink-landmark','#a1f3a3'],
+  'waink-curiosity':['Collectibles','WAiNK curiosities','waink-curiosity','#9fe3be'],
+  'waink-landmark':['Collectibles','WAiNK landmarks','waink-landmark','#9de7a8'],
+  'waink-sculpture':['Collectibles','WAiNK sculptures','waink-sculpture','#a8e8ca'],
+  'magazine':['Collectibles','Magazines & comics','magazine','#d6affd'],
+  'comics':['Collectibles','Magazines & comics','magazine','#d6affd'],
+  'hidden-package':['Collectibles','Hidden packages','hidden-package','#ffc47a'],
+  'package':['Collectibles','Hidden packages','hidden-package','#ffc47a'],
+  'meteorite':['Collectibles','Meteorites','meteorite','#dcaaff'],
+  'treasure':['Collectibles','Treasures','treasure','#f6cd6e'],
+  'message-bottle':['Collectibles','Messages in bottles','message-bottle','#99e7f1'],
+  'bottle':['Collectibles','Messages in bottles','message-bottle','#99e7f1'],
+  'book-swap':['Collectibles','Book swaps','book-swap','#c5b4ff'],
+  'bookswap':['Collectibles','Book swaps','book-swap','#c5b4ff'],
+  '1010-mural':['Collectibles','1010 murals','mural','#fca9c7'],
+  'mural':['Collectibles','1010 murals','mural','#fca9c7'],
+  'ahol-street-art':['Collectibles','Street art','ahol-street-art','#8fedc4'],
+  'streetart':['Collectibles','Street art','ahol-street-art','#8fedc4'],
+  'unique-playlist':['Collectibles','Unique playlists','playlist','#ffc5ac'],
+  'playlist':['Collectibles','Unique playlists','playlist','#ffc5ac'],
+  'underwater':['Collectibles','Underwater discoveries','treasure','#93d7ff'],
+  'flamingo':['Collectibles','Cocaine flamingos','landmark','#ff9ec6'],
+  'kenton':['Collectibles','Kenton sets','shooting-range','#ffd8a9'],
+  'standout-vehicle':['Collectibles','Standout vehicles','standout-vehicle','#ffc4db'],
+  'vehicle':['Collectibles','Standout vehicles','standout-vehicle','#ffc4db'],
+  'basketball':['Activities','Basketball hoops','basketball','#ffd292'],
+  'hoop':['Activities','Basketball hoops','basketball','#ffd292'],
+  'stunt-jump':['Activities','Stunt jumps','stunt-jump','#ffb1b9'],
+  'stunt':['Activities','Stunt jumps','stunt-jump','#ffb1b9'],
+  'under-the-bridge':['Activities','Under the bridge','under-the-bridge','#a7b8ff'],
+  'bridge':['Activities','Under the bridge','under-the-bridge','#a7b8ff'],
+  'knife-flight':['Activities','Knife flights','knife-flight','#a3c5ff'],
+  'knife':['Activities','Knife flights','knife-flight','#a3c5ff'],
+  'base-jump':['Activities','BASE jumps','base-jump','#94bafd'],
+  'basejump':['Activities','BASE jumps','base-jump','#94bafd'],
+  'race':['Activities','Races','race','#8fe9d2'],
+  'drone-race':['Activities','Drone time trials','drone-race','#a7e7ef'],
+  'drone':['Activities','Drone time trials','drone-race','#a7e7ef'],
+  'shooting-range':['Activities','Shooting ranges','shooting-range','#aabbc6'],
+  'range':['Activities','Shooting ranges','shooting-range','#aabbc6'],
+  'arcade':['Activities','Arcades & pool','arcade','#c9bfff'],
+  'pool':['Activities','Pool','pool','#c9bfff'],
+  'mini-golf':['Activities','Mini golf','mini-golf','#bcd0ff'],
+  'golf':['Activities','Golf','golf','#9ee5b1'],
+  'fishing':['Activities','Fishing spots','fishing','#94e3f8'],
+  'hunting':['Activities','Hunting','hunting','#acdca1'],
+  'meditation':['Activities','Meditation spots','landmark','#c7b9ef'],
+  'random-event':['Activities','Random events','random-event','#ff9fba'],
+  'event':['Activities','Random events','random-event','#ff9fba'],
+  'cinema':['Points of interest','Cinema','cinema','#d8b8fc'],
+  'gym':['Points of interest','Gym','gym','#d3b3fc'],
+  'nightclub':['Points of interest','Nightclub / club','nightclub','#f8a0d3'],
+  'club':['Points of interest','Club','nightclub','#f8a0d3'],
+  'atm':['Points of interest','ATM','atm','#a5e3b8'],
+  'ammu-nation':['Points of interest','Ammu-Nation','ammu-nation','#ffbf85'],
+  'safehouse':['Points of interest','Safehouses','safehouse','#f7e68b'],
+  'hospital':['Points of interest','Hospital','hospital','#a9d6f2'],
+  'police-station':['Points of interest','Police station','police-station','#8bc7f8'],
+  'fire-station':['Points of interest','Fire station','fire-station','#ffada6'],
+  'bank':['Robberies','Bank / vault','bank','#acef8e'],
+  'big-bank':['Robberies','Big bank','bank','#96e281'],
+  'payday-loan':['Robberies','Payday loans','payday-loan','#c9e994'],
+  'payday':['Robberies','Payday loans','payday-loan','#c9e994'],
+  'towable-atm':['Robberies','Towable ATM','towable-atm','#87e5cb'],
+  'towatm':['Robberies','Towable ATM','towable-atm','#87e5cb'],
+  'smash-n-grab':['Robberies',"Smash 'n' grab",'smash-n-grab','#ffbf9e'],
+  'smash':['Robberies',"Smash 'n' grab",'smash-n-grab','#ffbf9e'],
+  'safe':['Robberies','Safes','safe','#f4da91'],
+  'gang-operation':['Robberies','Gang operations','gang-operation','#e2a2a5'],
+  'gang':['Robberies','Gang operations','gang-operation','#e2a2a5'],
+  'fence':['Robberies','Fences','fence','#b9c5a6'],
+  'weapon-spawn':['Robberies','Weapon pickups','weapon-spawn','#bac2d2'],
+  'weapon':['Robberies','Weapon pickups','weapon-spawn','#bac2d2'],
+  'convenience-store':['Shops & food','Convenience store','convenience-store','#bfeaa2'],
+  'pawn-shop':['Shops & food','Pawn shop','landmark','#bed89d'],
+  'jewelry-store':['Shops & food','Jewellery','landmark','#e5ce95'],
+  'clothing':['Shops & food','Clothing','clothing','#c6e9a6'],
+  'footwear':['Shops & food','Footwear','footwear','#c6e9a6'],
+  'electronics':['Shops & food','Electronics','electronics','#c6e9a6'],
+  'tattoo':['Shops & food','Tattoo shop','landmark','#e8c3fc'],
+  'haircut':['Shops & food','Hair & beauty','landmark','#e8c3fc'],
+  'liquor-store':['Shops & food','Liquor store','liquor-store','#f7d8ad'],
+  'gas-station':['Shops & food','Gas station','gas-station','#addbfa'],
+  'fast-food':['Shops & food','Fast food','street-food','#f9c5a2'],
+  'street-food':['Shops & food','Street food','street-food','#f9c5a2'],
+  'cafe':['Shops & food','Cafe','street-food','#f9c5a2'],
+  'bar':['Shops & food','Bar','bar','#f7b4a5'],
+  'food':['Shops & food','Food & drink','street-food','#f7b4a5'],
+  'shop':['Shops & food','Other shops & services','convenience-store','#bbe7a3'],
+  'store':['Robberies','Stores to stick up','convenience-store','#efba87'],
+  'vehicle-rental':['Transport','Vehicle rentals','vehicle-rental','#a9d4ff'],
+  'vehicle-request':['Transport','Vehicle requests','vehicle-request','#a9d4ff'],
+  'vehicle-spawn':['Transport','Vehicle spawns','vehicle-spawn','#a9d4ff'],
+  'bus-stop':['Transport','Bus stops','bus-stop','#a4dbf5'],
+  'public-transport':['Transport','Public transport','public-transport','#a4dbf5'],
+  'ev-charger':['Transport','EV charging','ev-charger','#a0e4d9'],
+  'car-wash':['Transport','Car wash','car-wash','#a6d7f8'],
+  'pay-n-spray':['Transport',"Pay 'n' Spray",'pay-n-spray','#a6d7f8'],
+  'garage':['Transport','Garages','garage','#acbaff'],
+  'marina':['Transport','Marinas','marina','#a4d7ff'],
+  'transport':['Transport','Transport landmarks','public-transport','#a4d7ff'],
+  'hotel':['Places','Hotels & motels','landmark','#ebb1de'],
+  'civic':['Places','Civic & government','police-station','#9dbccf'],
+  'leisure':['Places','Leisure & sports venues','gym','#c4acf0'],
+  'nature':['Places','Nature & outdoors','landmark','#a8dfb1'],
+  'building':['Places','Buildings & landmarks','landmark','#cbd1d9'],
+  'other':['Places','Other locations','landmark','#cbd1d9']
+};
+const MAP_PIN_TYPES = new Set('ahol-street-art ammu-nation arcade atm bank bar base-jump basketball book-swap bus-stop car-wash cinema clothing collectible-card convenience-store drone-race electronics ev-charger fence fire-station fishing footwear gang-operation garage gas-station golf gym haircut hidden-package hospital hunting knife-flight landmark liquor-store magazine marina message-bottle meteorite mini-golf mural nightclub pay-n-spray payday-loan playlist police-station pool public-transport race random-event safe safehouse shooting-range smash-n-grab standout-vehicle street-food stunt-jump tattoo towable-atm treasure under-the-bridge vehicle-rental vehicle-request vehicle-spawn waink-curiosity waink-landmark waink-sculpture weapon-spawn'.split(' '));
+const EMOJI={atm:'🏧',bank:'🏦','ammu-nation':'🎯',gym:'🏋️',nightclub:'🎶',club:'🎶',cinema:'🎬',arcade:'🕹️',basketball:'🏀',bar:'🍹','stunt-jump':'🏁','collectible-card':'🃏','hidden-package':'🎁',magazine:'📖',treasure:'💎','book-swap':'📚',fishing:'🎣',hospital:'🏥','police-station':'🚓','fire-station':'🚒',clothing:'👕','gas-station':'⛽','payday-loan':'💵','towable-atm':'🏧','convenience-store':'🏪','liquor-store':'🍾','street-food':'🍔',marina:'⛵','bus-stop':'🚌','car-wash':'🧽',garage:'🚗','vehicle-spawn':'🚙','vehicle-rental':'🚘','weapon-spawn':'🎯','random-event':'❗',safehouse:'🏠',golf:'⛳',pool:'🎱',landmark:'📍',meteorite:'☄️',race:'🏁','base-jump':'🪂',mural:'🎨','message-bottle':'🍾',hunting:'🦌',tattoo:'🖋️',electronics:'📱',footwear:'👟',playlist:'🎵','smash-n-grab':'💰'};
+const PREFIXES = Object.keys(TYPES).filter(k=>!['personal','food','shop','building','transport','nature','leisure','hotel','civic','other','weapon','vehicle','event','range','smash','gang','bank','card','store','arcade','race','bridge','bottle','mural','hoop','safe','treasure'].includes(k)).sort((a,b)=>b.length-a.length);
+const defaultVisible = new Set(Object.keys(TYPES).filter(k=>TYPES[k][0]!=='Places'));
+const blank=()=>({records:{},custom:[],sync:{url:'',room:''}});
+let state; try{state={...blank(),...JSON.parse(localStorage.getItem(STORAGE)||'{}')}}catch(_){state=blank()}
+if(!state.records||typeof state.records!=='object')state.records={};
+if(!Array.isArray(state.custom))state.custom=[];
+if(!state.sync||typeof state.sync!=='object')state.sync={url:'',room:''};
+let places=[],all=[],profile='you',search='',categorySearch='',selected=null,activeTypes=new Set(defaultVisible),hideFound=false,favOnly=false;
+let placing=false,pendingPosition=null,drawPoints=[],syncTimer=null,busySync=false,map,tiles,markerLayer,frame=null;
+const icons=new Map();
+const safe=s=>String(s??'').replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+const format=n=>Number(n).toLocaleString('en-GB');
+const key=(p,id)=>p+'|'+id;
+const rec=id=>state.records[key(profile,id)]||{found:false,fav:false,note:'',updated:0};
+const locate=(x,y)=>L.latLng((y-16384)/32,(x+16384)/32);
+const unlocate=ll=>({x:ll.lng*32-16384,y:ll.lat*32+16384});
+const xyPoint=(x,y)=>({x:x*32-16384,y:16384-y*32});
+function notice(msg){const el=$('notice');el.textContent=msg;el.classList.add('show');clearTimeout(notice.timer);notice.timer=setTimeout(()=>el.classList.remove('show'),3900)}
+function save(){try{localStorage.setItem(STORAGE,JSON.stringify(state))}catch(e){notice('Browser storage is full. Download a backup.')}}
+function detectType(src){const id=String(src.id||'').toLowerCase(),t=String(src.type||'').toLowerCase();
+  // Prefer specific published ID/type over broad "shop" or "place" kind.
+  if(/^atm(?:-|$)/.test(id)||t==='atm')return'atm';
+  if(/^big-bank-/.test(id)||/big bank/.test(t))return'big-bank';
+  if(/^bank-/.test(id)||t==='bank')return'bank';
+  if(/^club-/.test(id)||t==='club')return'club';
+  if(/^cinema-/.test(id))return'cinema';
+  for(const prefix of PREFIXES){if(id===prefix||id.startsWith(prefix+'-'))return prefix}
+  if(src.service&&/safehouse/i.test(src.service))return'safehouse';
+  if(TYPES[src.kind])return src.kind;
+  return 'other';
+}
+function normalise(src,legacyPlace=false){if(!src||!Number.isFinite(src.x)||!Number.isFinite(src.y)||!src.id)return null;
+  const type=detectType(src),meta=TYPES[type]||TYPES.other;
+  const xy=xyPoint(src.x,src.y);
+  return {id:String(src.id),title:String(src.name||src.type||'Unnamed location'),area:String(src.area||''),description:String(src.description||''),x:xy.x,y:xy.y,kind:type,category:meta[0],typeName:meta[1],iconType:meta[2],colour:meta[3],type:String(src.type||src.service||''),tags:[],custom:false,realLife:src.real_life||'',legacyPlace};
+}
+function normaliseCustom(p){return {...p,kind:'personal',category:'My pins',typeName:p.subcategory||'Your own pin',iconType:'landmark',colour:TYPES.personal[3],tags:[],custom:true};}
+async function fetchJson(name){let error;for(const root of [DATA_BASE,DATA_FALLBACK]){try{const res=await fetch(root+name,{cache:'no-cache'});if(!res.ok)throw Error('HTTP '+res.status);return await res.json()}catch(e){error=e}}throw error||Error('Unable to fetch '+name)}
+async function loadPlaces(){try{
+  const [locations,legacy] = await Promise.all([fetchJson('locations.json'),fetchJson('places.json')]);
+  if(!Array.isArray(locations)||locations.length<100||!Array.isArray(legacy))throw Error('Location source incomplete');
+  let seen=new Set();places=[...locations,...legacy].map((x,i)=>normalise(x,i>=locations.length)).filter(p=>{if(!p||seen.has(p.id))return false;seen.add(p.id);return true});
+  if(places.length<100)throw Error('No usable locations');
+  $('loading').classList.add('hidden');refresh(true);
+}catch(err){$('loading').innerHTML='Could not load map locations.<br><small>'+safe(err.message)+'</small><br><button onclick="location.reload()">Retry</button>';refresh(true)}}
+function getPinImage(iconType){const type=MAP_PIN_TYPES.has(iconType)?iconType:'landmark';if(icons.has(type))return icons.get(type);
+  const img=new Image();const obj={img,ready:false};icons.set(type,obj);img.onload=()=>{obj.ready=true;if(map)draw()};img.onerror=()=>{obj.error=true};img.src=IMAGE_BASE+encodeURIComponent(type)+'.webp';return obj;
+}
+function iconHTML(type){const meta=TYPES[type]||TYPES.other;const asset=MAP_PIN_TYPES.has(meta[2])?meta[2]:'landmark';return '<span class="cat-icon" style="--ic:'+safe(meta[3])+'"><span class="icon-fallback" aria-hidden="true">'+(EMOJI[asset]||'📍')+'</span><img loading="lazy" alt="" src="'+IMAGE_BASE+asset+'.webp" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.style.display=\'none\'"></span>'}
+function initMap(){if(typeof L==='undefined'){$('loading').textContent='Map library unavailable. Check your internet connection.';return}
+  map=L.map('map',{crs:L.CRS.Simple,zoomControl:false,attributionControl:true,preferCanvas:true,minZoom:0,maxZoom:6,zoomSnap:1,zoomDelta:1,scrollWheelZoom:true,fadeAnimation:false,markerZoomAnimation:false});
+  map.attributionControl.setPrefix(false);
+  tiles=L.tileLayer(TILE_URL,{tileSize:256,minZoom:0,maxZoom:6,maxNativeZoom:6,noWrap:true,updateWhenZooming:false,keepBuffer:3,attribution:'Map tiles: <a href="https://github.com/rolux/gtadb.org" target="_blank">GTADB contributors</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a>'}).addTo(map);
+  tiles.on('tileerror',e=>{const im=e.tile;if(im&&im.dataset.fallback!=='1'){im.dataset.fallback='1';im.src=TILE_FALLBACK+e.coords.z+'/'+e.coords.z+','+e.coords.y+','+e.coords.x+'.jpg'}});
+  let start={x:-4000,y:2000,z:3};try{let q=new URLSearchParams(location.hash.slice(1));if(q.has('x')&&q.has('y')){start.x=Number(q.get('x'));start.y=Number(q.get('y'));start.z=Number(q.get('z')||3)}}catch(_){}
+  if(!Number.isFinite(start.x)||!Number.isFinite(start.y))start={x:-4000,y:2000,z:3};map.setView(locate(start.x,start.y),Math.max(0,Math.min(6,start.z)));
+  const CanvasOverlay=L.Layer.extend({onAdd:function(m){this.canvas=L.DomUtil.create('canvas','leonida-canvas');this.canvas.style.pointerEvents='none';this.canvas.style.position='absolute';m.getPanes().overlayPane.appendChild(this.canvas);m.on('move zoom resize',this.redraw,this);this.redraw()},onRemove:function(m){m.off('move zoom resize',this.redraw,this);this.canvas.remove()},redraw:function(){if(frame!==null)cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{frame=null;draw()})}});
+  markerLayer=new CanvasOverlay().addTo(map);
+  map.on('click',e=>{if(placing){pendingPosition=unlocate(e.latlng);$('pinModal').classList.add('show');$('pinTitle').focus();return}
+    const cp=map.latLngToContainerPoint(e.latlng);let hit=null,closest=25;for(let i=drawPoints.length-1;i>=0;i--){const item=drawPoints[i],dist=Math.hypot(item.sx-cp.x,item.sy-cp.y);if(dist<closest){hit=item;closest=dist}}if(hit){if(hit.cluster){map.setView(locate(hit.x,hit.y),Math.min(6,map.getZoom()+1));return}showPlace(hit.place)}else closeDetail()});
+  $('zoomIn').onclick=()=>map.zoomIn(1);$('zoomOut').onclick=()=>map.zoomOut(1);
+}
+function visiblePlaces(){return all.filter(p=>{
+  if(!activeTypes.has(p.kind))return false;
+  if(search){const hay=(p.title+' '+p.area+' '+p.type+' '+p.typeName+' '+p.description+' '+p.realLife).toLowerCase();if(!hay.includes(search))return false}
+  const r=rec(p.id);if(hideFound&&r.found)return false;if(favOnly&&!r.fav)return false;return true
+})}
+function rounded(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
+function draw(){if(!map||!markerLayer?.canvas)return;const c=markerLayer.canvas,size=map.getSize(),dpr=Math.min(devicePixelRatio||1,2),topLeft=map.containerPointToLayerPoint([0,0]);
+  L.DomUtil.setPosition(c,topLeft);c.style.width=size.x+'px';c.style.height=size.y+'px';c.width=Math.ceil(size.x*dpr);c.height=Math.ceil(size.y*dpr);const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,size.x,size.y);drawPoints=[];
+  const candidates=[];for(const p of visiblePlaces()){let pt=map.latLngToContainerPoint(locate(p.x,p.y));if(pt.x< -30||pt.x>size.x+30||pt.y< -30||pt.y>size.y+30)continue;candidates.push({place:p,sx:pt.x,sy:pt.y,x:p.x,y:p.y})}
+  const grouping=map.getZoom()<4&&!search;let objs=[];
+  if(grouping){const cells=new Map(),cell=map.getZoom()<2?55:map.getZoom()<3?44:34;for(const p of candidates){if(p.place.custom){objs.push(p);continue}const id=Math.floor(p.sx/cell)+'|'+Math.floor(p.sy/cell);let g=cells.get(id);if(!g){g={sx:0,sy:0,x:0,y:0,count:0,items:[],cluster:true};cells.set(id,g)}g.sx+=p.sx;g.sy+=p.sy;g.x+=p.x;g.y+=p.y;g.count++;g.items.push(p)}for(const g of cells.values()){if(g.count===1)objs.push(g.items[0]);else{g.sx/=g.count;g.sy/=g.count;g.x/=g.count;g.y/=g.count;objs.push(g)}}}
+  else objs=candidates;
+  // Clusters underneath icon pins.
+  for(const p of objs.filter(x=>x.cluster)){const r=Math.min(22,12+Math.log2(p.count)*1.75);ctx.beginPath();ctx.arc(p.sx,p.sy,r,0,Math.PI*2);ctx.fillStyle='#142b35';ctx.fill();ctx.strokeStyle='#d7f478';ctx.lineWidth=2;ctx.stroke();ctx.font='800 11px system-ui';ctx.fillStyle='#f3fcf3';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.count>999?'999+':String(p.count),p.sx,p.sy)}
+  for(const p of objs.filter(x=>!x.cluster)){const place=p.place,found=rec(place.id).found,custom=place.custom,meta=TYPES[place.kind]||TYPES.other,color=meta[3],sz=custom?28:26,x=p.sx-sz/2,y=p.sy-sz/2;
+    ctx.shadowColor='#0007';ctx.shadowBlur=4;ctx.shadowOffsetY=2;rounded(ctx,x,y,sz,sz,6);ctx.fillStyle=custom?'#d6fa72':'#161e2d';ctx.fill();ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;ctx.lineWidth=1.5;ctx.strokeStyle=custom?'#eaffb2':color;ctx.stroke();
+    if(custom){ctx.fillStyle='#182c23';ctx.font='900 17px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('★',p.sx,p.sy+1)}
+    else{const ico=getPinImage(place.iconType);if(ico.ready)ctx.drawImage(ico.img,x+3,y+3,sz-6,sz-6);else{ctx.fillStyle=color;ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(EMOJI[place.iconType]||'📍',p.sx,p.sy)}}
+    if(found){ // A separate tick; keep the original icon fully visible.
+      const cx=p.sx+sz/2+3,cy=p.sy-sz/2-3;ctx.beginPath();ctx.arc(cx,cy,8,0,Math.PI*2);ctx.fillStyle='#d6fa72';ctx.fill();ctx.strokeStyle='#112b20';ctx.lineWidth=1.5;ctx.stroke();ctx.font='900 12px system-ui';ctx.fillStyle='#123120';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('✓',cx,cy+.3);
+    }
+  }
+  drawPoints=objs;$('placeCount').textContent=format(candidates.length)+' pins in view';
+}
+function updateSearchResults(){const box=$('searchResults');if(!search){box.classList.remove('show');box.innerHTML='';return}
+  const matches=all.filter(p=>(p.title+' '+p.area+' '+p.type+' '+p.typeName+' '+p.description+' '+p.realLife).toLowerCase().includes(search));box.classList.add('show');
+  box.innerHTML=matches.length?matches.slice(0,13).map(p=>'<button class="result" data-id="'+safe(p.id)+'">'+safe(p.title)+'<small>'+safe(p.typeName)+' · '+safe(p.area||'Leonida')+'</small></button>').join('')+(matches.length>13?'<div class="resultempty">Showing 13 of '+format(matches.length)+'. Narrow your search.</div>':''):'<div class="resultempty">No matching locations.</div>';
+  box.querySelectorAll('[data-id]').forEach(btn=>btn.onclick=()=>{const p=all.find(x=>x.id===btn.dataset.id);if(p&&map){map.setView(locate(p.x,p.y),Math.max(map.getZoom(),5));activeTypes.add(p.kind);showPlace(p);renderCategories();draw()}})
+}
+function renderCategories(){const counts={};for(const p of all)counts[p.kind]=(counts[p.kind]||0)+1;
+  const activeCount=Object.keys(counts).filter(k=>activeTypes.has(k)).length;
+  $('toggleCats').textContent=activeCount?'Hide all':'Show all';
+  const root=$('categories');const matches=(entry)=>!categorySearch||entry[1][1].toLowerCase().includes(categorySearch)||entry[1][0].toLowerCase().includes(categorySearch)||entry[0].includes(categorySearch);
+  root.innerHTML=GROUPS.map(([g,header])=>{
+    const entries=Object.entries(TYPES).filter(([type,m])=>m[0]===g&&(counts[type]||0)>0&&matches([type,m]));if(!entries.length)return'';
+    const allTypes=Object.entries(TYPES).filter(([type,m])=>m[0]===g&&(counts[type]||0)>0).map(([type])=>type);
+    const total=entries.reduce((n,[k])=>n+(counts[k]||0),0),active=allTypes.filter(k=>activeTypes.has(k)).length;
+    return '<section class="cat-section"><div class="cat-section-head"><span>'+safe(header)+' <small>'+format(total)+'</small></span><span class="cat-section-actions"><button data-show-group="'+safe(g)+'">SHOW</button><button data-hide-group="'+safe(g)+'">HIDE</button></span></div><div class="cat-grid">'+entries.map(([k,m])=>'<div class="category '+(activeTypes.has(k)?'enabled':'')+'"><label title="'+safe(m[1])+'"><input type="checkbox" data-category="'+safe(k)+'" '+(activeTypes.has(k)?'checked':'')+' aria-label="Show '+safe(m[1])+'">'+iconHTML(k)+'<span class="catname">'+safe(m[1])+'</span><span class="catcount">'+format(counts[k])+'</span></label><button class="only-btn" aria-label="Show only '+safe(m[1])+'" data-only="'+safe(k)+'">ONLY</button></div>').join('')+'</div></section>'
+  }).join('')||'<div class="help">No matching categories.</div>';
+  root.querySelectorAll('input[data-category]').forEach(i=>i.onchange=()=>{i.checked?activeTypes.add(i.dataset.category):activeTypes.delete(i.dataset.category);renderCategories();draw()});
+  root.querySelectorAll('[data-only]').forEach(b=>b.onclick=()=>{activeTypes=new Set([b.dataset.only]);renderCategories();draw()});
+  root.querySelectorAll('[data-show-group]').forEach(b=>b.onclick=()=>{for(const[k,m]of Object.entries(TYPES))if(m[0]===b.dataset.showGroup)activeTypes.add(k);renderCategories();draw()});
+  root.querySelectorAll('[data-hide-group]').forEach(b=>b.onclick=()=>{for(const[k,m]of Object.entries(TYPES))if(m[0]===b.dataset.hideGroup)activeTypes.delete(k);renderCategories();draw()});
+}
+function refresh(redraw){all=[...places,...state.custom.map(normaliseCustom)];
+  const count=all.filter(p=>rec(p.id).found).length,total=all.length;
+  $('progressText').textContent=format(count)+' found';$('totalText').textContent=format(total)+' places';$('progressBar').style.width=(total?count/total*100:0).toFixed(2)+'%';
+  $('progressHelp').textContent=profile==='you'?"Luke's progress, separate from Pupper's.":"Pupper's progress, separate from Luke's.";
+  $('profileLabel').textContent=profile==='you'?'LUKE':'PUPPER';renderCategories();updateSearchResults();if(redraw)draw();
+}
+function setRecord(id,data){const k=key(profile,id),r={...rec(id),...data,updated:Date.now()};state.records[k]=r;save();refresh(true);if(selected?.id===id)renderDetail();if(state.sync?.url&&state.sync?.room)pushSync(k,r)}
+function showPlace(p){selected=p;$('detail').classList.add('show');renderDetail();if(innerWidth<=780){$('sidebar').classList.remove('open');$('mobileVeil').classList.remove('show')}}
+function closeDetail(){selected=null;$('detail').classList.remove('show')}
+function renderDetail(){if(!selected)return;const p=selected,r=rec(p.id);$('detailCategory').textContent=p.typeName||TYPES[p.kind]?.[1]||'Location';$('detailTitle').textContent=p.title;
+  $('detailDescription').textContent=(p.custom?(p.description||'Your personal location.'):[p.area?'Area: '+p.area:'',p.description||'',p.realLife?'Real-life counterpart: '+p.realLife:''].filter(Boolean).join(' · '))||'Location on the Leonida map.';
+  $('markFound').textContent=r.found?'✓ Found':'✓ Mark found';$('markFound').classList.toggle('active',!!r.found);$('markFound').classList.toggle('primary',!r.found);
+  $('markFavourite').textContent=r.fav?'★ Saved':'☆ Save';$('markFavourite').classList.toggle('active',!!r.fav);$('detailNote').value=r.note||'';$('deleteCustom').classList.toggle('hidden',!p.custom)
+}
+function updateProfile(p){profile=p;document.querySelectorAll('.profile').forEach(x=>x.classList.toggle('active',x.dataset.profile===p));closeDetail();refresh(true)}
+function openSettings(){$('syncUrl').value=state.sync.url||'';$('roomCode').value=state.sync.room||'';setSyncBadge();$('settingsModal').classList.add('show');$('sidebar').classList.remove('open');$('mobileVeil').classList.remove('show')}
+function setSyncBadge(){const on=!!(state.sync?.url&&state.sync?.room);$('syncBadge').innerHTML='<i></i> '+(on?'Shared sync configured':'Saved on this device');$('forceSync').disabled=!on}
+function initEvents(){
+  document.querySelectorAll('.profile').forEach(el=>el.onclick=()=>updateProfile(el.dataset.profile));
+  $('search').oninput=e=>{search=e.target.value.trim().toLowerCase();updateSearchResults();draw()};
+  $('search').onkeydown=e=>{if(e.key==='Enter'){const first=$('searchResults').querySelector('[data-id]');if(first)first.click()}};
+  $('categorySearch').oninput=e=>{categorySearch=e.target.value.trim().toLowerCase();renderCategories()};
+  $('hideFound').onclick=()=>{hideFound=!hideFound;$('hideFound').classList.toggle('on',hideFound);draw()};
+  $('favOnly').onclick=()=>{favOnly=!favOnly;$('favOnly').classList.toggle('on',favOnly);draw()};
+  $('toggleCats').onclick=()=>{const counts=new Set(all.map(p=>p.kind)),any=Array.from(counts).some(k=>activeTypes.has(k));activeTypes=any?new Set():new Set(Object.keys(TYPES));renderCategories();draw()};
+  $('markFound').onclick=()=>selected&&setRecord(selected.id,{found:!rec(selected.id).found});
+  $('markFavourite').onclick=()=>selected&&setRecord(selected.id,{fav:!rec(selected.id).fav});
+  $('saveNote').onclick=()=>{if(selected){setRecord(selected.id,{note:$('detailNote').value.trim()});notice('Note saved')}};
+  $('detailNote').onkeydown=e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')$('saveNote').click()};$('closeDetail').onclick=closeDetail;
+  $('addPin').onclick=()=>{placing=!placing;$('addPin').classList.toggle('placing',placing);$('addPin').textContent=placing?'× Cancel placing pin':'＋ Add your own pin';notice(placing?'Tap anywhere on the map to place your pin.':'Pin placement cancelled.')};
+  const closePin=()=>{$('pinModal').classList.remove('show');pendingPosition=null;placing=false;$('addPin').classList.remove('placing');$('addPin').textContent='＋ Add your own pin';$('pinTitle').value='';$('pinDesc').value=''};
+  $('pinClose').onclick=closePin;$('pinCancel').onclick=closePin;
+  $('pinSave').onclick=()=>{const title=$('pinTitle').value.trim();if(!title||!pendingPosition){notice('Enter a name and choose a location');return}
+    const id='custom-'+(crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(36).slice(2));const p={id,title,category:'My pins',subcategory:$('pinCategory').value,description:$('pinDesc').value.trim(),x:pendingPosition.x,y:pendingPosition.y,custom:true,created:Date.now()};state.custom.push(p);activeTypes.add('personal');save();closePin();refresh(true);showPlace(normaliseCustom(p));if(state.sync?.url&&state.sync?.room)pushSync('custom|'+id,p);notice('Personal pin added')};
+  $('deleteCustom').onclick=()=>{if(!selected?.custom||!confirm('Delete this personal pin for both map profiles?'))return;const id=selected.id;state.custom=state.custom.filter(p=>p.id!==id);save();if(state.sync?.url&&state.sync?.room)pushSync('custom|'+id,{deleted:true,id,updated:Date.now()});closeDetail();refresh(true);notice('Pin removed')};
+  $('menuBtn').onclick=()=>{$('sidebar').classList.add('open');$('mobileVeil').classList.add('show')};$('closeMenu').onclick=$('mobileVeil').onclick=()=>{$('sidebar').classList.remove('open');$('mobileVeil').classList.remove('show')};
+  for(const b of ['settingsBtn','settingsTop'])$(b).onclick=openSettings;$('settingsClose').onclick=()=>$('settingsModal').classList.remove('show');$('settingsModal').addEventListener('click',e=>{if(e.target===$('settingsModal'))$('settingsModal').classList.remove('show')});$('pinModal').addEventListener('click',e=>{if(e.target===$('pinModal'))closePin()});
+  $('shareBtn').onclick=shareView;$('detailShare').onclick=shareView;$('detailShare').title='Share this map position';$('exportBtn').onclick=backup;$('downloadBackup').onclick=backup;$('importBackupBtn').onclick=()=>$('importFile').click();$('importFile').onchange=importBackup;
+  $('generateRoom').onclick=()=>{let bytes=new Uint8Array(16);crypto.getRandomValues(bytes);$('roomCode').value=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('')};
+  $('saveSync').onclick=()=>{let url=$('syncUrl').value.trim(),room=$('roomCode').value.trim();if((url||room)&&(!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(url)||!/^[a-zA-Z0-9_-]{16,64}$/.test(room))){notice('Enter a deployed Apps Script /exec URL and a 16–64 character room code');return}state.sync={url,room};save();configureSync();setSyncBadge();notice(url?'Sync settings saved — connecting…':'Device-only mode enabled')};
+  $('disconnectSync').onclick=()=>{state.sync={url:'',room:''};save();configureSync();setSyncBadge();$('syncUrl').value='';$('roomCode').value='';notice('Shared sync disconnected')};$('forceSync').onclick=()=>pullSync(true);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDetail();$('settingsModal').classList.remove('show');closePin()}});
+}
+function shareView(){if(!map)return;const xy=unlocate(map.getCenter()),hash='#x='+xy.x.toFixed(0)+'&y='+xy.y.toFixed(0)+'&z='+map.getZoom();const link=location.href.split('#')[0]+hash;if(navigator.share&&innerWidth<600){navigator.share({title:'Leonida Together — map view',url:link}).catch(()=>{})}else if(navigator.clipboard?.writeText){navigator.clipboard.writeText(link).then(()=>notice('Map view link copied')).catch(()=>notice('Copy this page URL to share'))}else prompt('Copy this map view URL',link)}
+function backup(){const content=JSON.stringify({app:'Leonida Together',version:1,exportedAt:new Date().toISOString(),records:state.records,custom:state.custom},null,2),a=document.createElement('a'),blob=new Blob([content],{type:'application/json'});a.href=URL.createObjectURL(blob);a.download='leonida-together-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);notice('Backup downloaded')}
+async function importBackup(e){const file=e.target.files?.[0];if(!file)return;try{if(file.size>10_000_000)throw Error('File too large');const obj=JSON.parse(await file.text());if(obj.app!=='Leonida Together'||obj.version!==1||typeof obj.records!=='object'||!Array.isArray(obj.custom))throw Error('Not a Leonida Together backup');for(const[k,v]of Object.entries(obj.records)){if(k.length>300||!v||typeof v!=='object')continue;if(!state.records[k]||(v.updated||0)>(state.records[k].updated||0))state.records[k]={found:!!v.found,fav:!!v.fav,note:String(v.note||'').slice(0,1200),updated:Number(v.updated)||0}}for(const p of obj.custom){if(!p||typeof p.id!=='string'||!p.id.startsWith('custom-')||!Number.isFinite(p.x)||!Number.isFinite(p.y))continue;if(!state.custom.some(x=>x.id===p.id))state.custom.push({...p,category:'My pins',custom:true})}save();refresh(true);notice('Backup merged successfully')}catch(ex){notice('Import failed: '+ex.message)}finally{e.target.value=''}}
+function configureSync(){clearInterval(syncTimer);syncTimer=null;const on=!!(state.sync?.url&&state.sync?.room);if(on){pullSync(false);syncTimer=setInterval(()=>pullSync(false),22000)}setSyncBadge()}
+function jsonp(params){return new Promise((resolve,reject)=>{if(!state.sync?.url)return reject(Error('Not connected'));const id='ltcb'+Math.random().toString(36).slice(2),sc=document.createElement('script');let finished=false;let timer;const done=(err,res)=>{if(finished)return;finished=true;clearTimeout(timer);delete window[id];sc.remove();err?reject(err):resolve(res)};window[id]=res=>done(null,res);const url=new URL(state.sync.url);for(const[k,v]of Object.entries({...params,callback:id}))url.searchParams.set(k,String(v));sc.onerror=()=>done(Error('Sync service unavailable'));sc.src=url.toString();document.head.appendChild(sc);timer=setTimeout(()=>done(Error('Sync timed out')),14000)})}
+async function pushSync(k,v){if(!state.sync?.url)return;try{const response=await jsonp({action:'set',room:state.sync.room,key:k,value:JSON.stringify(v).slice(0,1700)});if(!response.ok)throw Error(response.error||'Write failed')}catch(e){notice('Sync failed — saved locally. '+e.message)}}
+async function pullSync(manual){if(busySync||!state.sync?.url)return;busySync=true;try{const res=await jsonp({action:'all',room:state.sync.room});if(!res.ok)throw Error(res.error||'Read failed');let changed=0;for(const[k,val]of Object.entries(res.data||{})){if(k.startsWith('custom|')){const id=k.slice(7);const idx=state.custom.findIndex(p=>p.id===id);if(val.deleted){if(idx!==-1){state.custom.splice(idx,1);changed++}}else if(val?.id===id&&Number.isFinite(val.x)&&Number.isFinite(val.y)&&idx===-1){state.custom.push({...val,category:'My pins',custom:true});changed++}continue}if(!/^(you|partner)\|/.test(k)||!val||typeof val!=='object')continue;const old=state.records[k];if(!old||(Number(val.updated)||0)>(Number(old.updated)||0)){state.records[k]={found:!!val.found,fav:!!val.fav,note:String(val.note||'').slice(0,1200),updated:Number(val.updated)||0};changed++}}if(changed){save();refresh(true);if(selected)renderDetail()}if(manual)notice('Synced successfully'+(changed?' — '+changed+' updates':''))}catch(e){if(manual)notice('Could not sync: '+e.message)}finally{busySync=false}}
+initEvents();initMap();refresh(false);loadPlaces();configureSync();
+})();
+
+</script>
+</body></html>
